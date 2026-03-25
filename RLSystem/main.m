@@ -10,7 +10,7 @@ R = 2;
 %% Design Specs
 OS = 10; % Overshoot
 Ts_req = 1; % Settling time must be under 1 second
-tuning = 0.3; % Additional tuning value to zeta to bring overshoot down
+tuning = 0.2; % Additional tuning value to zeta to bring overshoot down
 
 %% Solve for damping ratio from overshoot
 zeta = -log(OS/100) / sqrt(pi^2 + (log(OS/100))^2); % This is minimum, I can scale this with a constant gain for tuning
@@ -21,7 +21,7 @@ zeta = zeta + tuning;
 wn_min = 4/(zeta*Ts_req);
 
 % choose a value a bit larger than minimum for margin
-wn = 8;
+wn = 6;
 
 %% PI Controller Design
 % Characteristic Equation:
@@ -46,7 +46,7 @@ load_system(model);
 
 % Simulation Time
 simIn = Simulink.SimulationInput(model);
-simIn = simIn.setModelParameter('StopTime', '5');
+simIn = simIn.setModelParameter('StopTime', '5', 'MaxStep', '0.001');
 simOut = sim(simIn);
 
 %% Extract Data from Simulink
@@ -58,25 +58,21 @@ figure;
 plot(t, y, 'LineWidth', 2);
 hold on;
 grid on;
+
 xlabel('Time (s)');
 ylabel('Output');
 title('Step Response (RL System)');
-
-%% Performance Metrics
-info = stepinfo(y, t);
-
-disp('Performance from Simulink:');
-disp(info);
 
 %% Find Peak Value
 [ymax, idx] = max(y);
 t_peak = t(idx);
 
-%% Horizontal Line at peak
-yline(ymax, '--r', sprintf('Peak = %.3f s', t_peak), 'LineWidth', 1.2);
+%% Lines
+yline(ymax, '--r', sprintf('Peak = %.3f', ymax), 'LineWidth', 1.5);
+xline(t_peak, '--k', sprintf('t = %.3f s', t_peak), 'LineWidth', 1.2);
+yline(1.1, ':g', '1.1 (10% limit)', 'LineWidth', 1.5);
 
-%% Reference line at 1.1 (10% overshoot limit)
-yline(1.1, ':p', '1.1 (10% limit)', 'LineWidth', 1.5);
+%% Zoom to transient
+xlim([0 max(1.5, 2*t_peak)]);
 
 hold off;
-
