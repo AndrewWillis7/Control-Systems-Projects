@@ -10,9 +10,11 @@ R = 2;
 %% Design Specs
 OS = 10; % Overshoot
 Ts_req = 1; % Settling time must be under 1 second
+tuning = 0.3; % Additional tuning value to zeta to bring overshoot down
 
 %% Solve for damping ratio from overshoot
-zeta = -log(OS/100) / sqrt(pi^2 + (log(OS/100))^2);
+zeta = -log(OS/100) / sqrt(pi^2 + (log(OS/100))^2); % This is minimum, I can scale this with a constant gain for tuning
+zeta = zeta + tuning;
 
 %% Choose wn to satisfy Ts < 1 sec
 % Ts ~= 4/(zeta*wn)
@@ -54,6 +56,7 @@ y = simOut.yout.signals.values;
 %% Plot in Matlab
 figure;
 plot(t, y, 'LineWidth', 2);
+hold on;
 grid on;
 xlabel('Time (s)');
 ylabel('Output');
@@ -64,4 +67,16 @@ info = stepinfo(y, t);
 
 disp('Performance from Simulink:');
 disp(info);
+
+%% Find Peak Value
+[ymax, idx] = max(y);
+t_peak = t(idx);
+
+%% Horizontal Line at peak
+yline(ymax, '--r', sprintf('Peak = %.3f s', t_peak), 'LineWidth', 1.2);
+
+%% Reference line at 1.1 (10% overshoot limit)
+yline(1.1, ':p', '1.1 (10% limit)', 'LineWidth', 1.5);
+
+hold off;
 
