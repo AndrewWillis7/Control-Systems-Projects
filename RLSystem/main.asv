@@ -81,36 +81,19 @@ xlim([0 max(1.5, 2*t_peak)]);
 hold off;
 
 %% Figure 2 - Theoretical Damping Ratio (10% overshoot)
-zeta_range = linspace(0.001, 0.99, 1000);
-PO_curve = 100 * exp((-zeta_range .* pi) ./ sqrt(1 - zeta_range.^2));
-
-% selected theoretical point
-zeta_sel = zeta;
-PO_sel = 100 * exp((-zeta * pi) / sqrt(1 - zeta^2));
+zeta_theory = -log(OS/100) / sqrt(pi^2 + (log(OS/100))^2);
+PO_theory = 100 * exp((-zeta_theory * pi) / sqrt(1 - zeta_theory^2));
 
 figure;
-plot(zeta_range, PO_curve, 'LineWidth', 2);
 hold on;
 grid on;
 
-% Labels 
-xlabel('\zeta');
-ylabel('M_p, %');
-title('Percent Overshoot vs Damping Ratio');
+xlabel('\zeta (Damping Ratio)');
+ylabel('Percent Overshoot (%)');
+title('Theoretical Damping Ratio for 10% overshoot');
 
-% Plot selected point
-plot(zeta_sel, PO_sel, 'ro', 'MarkerSize', 10, 'LineWidth', 2);
+% Plot theoretical point only
+plot(zeta_theory, PO_theory, 'ro', 'MarkerSize', 10, 'LineWidth', 2);
 
-xline(zeta_sel, '--r');
-yline(PO_sel, '--r');
-
-% Add annotation
-text(zeta_sel + 0.02, PO_sel, ...
-    sprintf('\\zeta = %.3f\nM_p = %.1f%%', zeta_sel, PO_sel), ...
-    'FontSize', 10);
-
-% Match axis limits
-xlim([0 1]);
-ylim([0 100]);
-
-hold off;
+% Add reference lines
+xline(zeta_theory, '--r', sprintf('\\zeta = %.3f', zeta_theory), )
