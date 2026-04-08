@@ -6,6 +6,7 @@ close all;
 p = params();
 
 %% Modify
+p.Ea = 20;
 
 %% Simulink
 model = 'sim_open';
