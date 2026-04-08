@@ -1,0 +1,11 @@
+%% Model Parameters
+
+function p = params()
+p = struct();
+
+%% DC Motor Parameters
+p.Kb = 0.0772;
+p.Ki = 0.067;
+p.Ra = 0.7454;
+p.La = 4.8e-3;
+p.Jm = 6.85
