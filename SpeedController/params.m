@@ -25,6 +25,7 @@ p.wm_ref = 140;
 
 %% Simulation
 p.tstop = 6;
+p.maxstep = 0.001;
 
 p.den = [p.Jm * p.La, ...
     p.Jm * p.Ra + p.Bm * p.La, ...
